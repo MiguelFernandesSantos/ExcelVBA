@@ -8,7 +8,7 @@ If Application.Visible = False Then
         
              Dim Pergunta As VbMsgBoxResult
              
-             Pergunta = MsgBox("Deseja salvar antes de fechar o formulario?", vbYesNo)
+                Pergunta = MsgBox("Deseja salvar antes de fechar o formulario?", vbYesNo)
              
              If Pergunta = vbYes Then
              
