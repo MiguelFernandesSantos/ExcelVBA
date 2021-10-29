@@ -1,3 +1,11 @@
+'---------------------------------------------
+'                                            '
+'   Nome: Miguel Fernandes Santos.           '
+'   Data: 29/10/2021                         '
+'   Projeto: Filtro Avançado.                '
+'                                            '
+'---------------------------------------------
+
 Sub Filtrar_receber()
     
     ULTIMA_LINHA = Sheets("DADOS").Range("K1048576").End(xlUp).Row
