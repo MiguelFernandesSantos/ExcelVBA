@@ -1,3 +1,11 @@
+'---------------------------------------------
+'                                            '
+'   Nome: Miguel Fernandes Santos.           '
+'   Data: 29/10/2021                         '
+'   Projeto: Editanto Planilha.              '
+'                                            '
+'---------------------------------------------
+
 Private Sub CommandButton1_Click()
 
 ' -------- HOLERITE FORMATAÇÃO PARTE 1 --------'
