@@ -1,3 +1,12 @@
+'---------------------------------------------
+'                                            '
+'   Nome: Miguel Fernandes Santos.           '
+'   Data: 29/10/2021                         '
+'   Projeto: Caixa de Texto que aceita_      '
+'   Somente numero.                          '
+'                                            '
+'---------------------------------------------
+
 Dim virgula As Boolean
 
 Private Sub txtvalor_KeyPress(ByVal KeyAscii As MSForms.ReturnInteger)
