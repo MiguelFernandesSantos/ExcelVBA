@@ -1,3 +1,11 @@
+'---------------------------------------------
+'                                            '
+'   Nome: Miguel Fernandes Santos.           '
+'   Data: 29/10/2021                         '
+'   Projeto: Caixa de Texto Formato Data.    '
+'                                            '
+'---------------------------------------------
+
 Dim comprovante1 As Boolean
 Dim comprovante2 As Boolean
 Dim comprovante3 As Boolean
