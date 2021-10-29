@@ -1,3 +1,11 @@
+'---------------------------------------------
+'                                            '
+'   Nome: Miguel Fernandes Santos.           '
+'   Data: 29/10/2021                         '
+'   Projeto: Fechar Planilha Alternativo.    '
+'                                            '
+'---------------------------------------------
+
 Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
 
 If Application.Visible = False Then
