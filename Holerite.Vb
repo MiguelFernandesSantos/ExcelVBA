@@ -1,3 +1,11 @@
+'---------------------------------------------
+'                                            '
+'   Nome: Miguel Fernandes Santos.           '
+'   Data: 29/10/2021                         '
+'   Projeto: Holerite. (Didatico)            '
+'                                            '
+'---------------------------------------------
+
 ' VARIAVEIS PARA OS VALORES DAS CAIXAS DE TEXTO.
 Dim quantas_hr_extra     As Double
 Dim quantas_faltas       As Double
