@@ -1,13 +1,15 @@
-' falta adicionar linhas se faltar:
-
 Sub NovoCalendario()
+    
+    ' Variaveis para erros:
+    Dim erroLinha1      As Integer
+    Dim erroColuna1     As Integer
+    Dim TipoErro        As Integer
     
     ' variaveis para tarefas
     Dim UltimaLinha     As Integer
     Dim LinhaAtual      As Integer
     Dim Tarefa          As String
     Dim Periocidade     As String
-    Dim PrazoFinal      As Double
     Dim DataConclusao   As Integer
     Dim Localidade      As String
     Dim EstaVazio       As String
@@ -23,6 +25,7 @@ Sub NovoCalendario()
     Dim qtsLinhas       As Integer
     Dim LinhaUm         As Integer
     Dim LinhaDois       As Integer
+    Dim NovaUltimaLinha As Integer
      
     ' Variaveis para adicionar a linha:
     Dim LocalUm         As String
@@ -52,16 +55,46 @@ Sub NovoCalendario()
     
     ' se nao tiver nada cadastrado nas tarefas:
     If (UltimaLinha = 4) Then
+    
+        MsgBox "Por favor, insira as tarefas que você deseja adicionar."
         Exit Sub
+        
     Else ' se tiver algo cadastrado:
+    
         LinhaAtual = 5
+        
     End If
     
     ' laço para realizar em todas as planilhas:
     While (AuxiliarNome <= ultimaPlanilha)
         
-        NomePlanilha = Sheets("TAREFAS").Range("F" & AuxiliarNome).Value
-        QtsDias = Sheets("TAREFAS").Range("F" & AuxiliarNome).Offset(0, 1).Value
+        ' Verificia se existe uma tarefa para ser cadastrada:
+        If (Sheets("TAREFAS").Range("F" & AuxiliarNome).Value <> "") Then
+        
+            NomePlanilha = Sheets("TAREFAS").Range("F" & AuxiliarNome).Value
+            
+        Else ' se não
+        
+            erroLinha1 = Sheets("TAREFAS").Range("F" & AuxiliarNome).Row
+            MsgBox "Erro1: Não existe uma planilha cadastrada na linha " & erroLinha1 & "."
+            Exit Sub
+            
+        End If
+        
+        ' Verifica se existe dias cadastrado:
+        If (Sheets("TAREFAS").Range("F" & AuxiliarNome).Offset(0, 1).Value <> "") Then
+            
+            'On Error GoTo Erro3
+            QtsDias = Sheets("TAREFAS").Range("F" & AuxiliarNome).Offset(0, 1).Value
+            
+            
+        Else ' Se não:
+        
+            erroLinha1 = Sheets("TAREFAS").Range("F" & AuxiliarNome).Offset(0, 1).Row
+            MsgBox "Erro2: Não existe a quantidade de dias da planilha na linha " & erroLinha1 & "."
+            Exit Sub
+        
+        End If
         
         ' Adiciona mais 1 na variavel auxiliar nome:
         AuxiliarNome = AuxiliarNome + 1
@@ -69,11 +102,21 @@ Sub NovoCalendario()
         ' Laço para percorrer todas as celulas:
         While (LinhaAtual <= UltimaLinha)
         
-            ' Pega os valores das celulas:
-            Tarefa = Sheets("TAREFAS").Range("A" & LinhaAtual).Value
-            Periocidade = Sheets("TAREFAS").Range("B" & LinhaAtual).Value
-            PrazoFinal = Sheets("TAREFAS").Range("C" & LinhaAtual).Value
-            DataConclusao = Sheets("TAREFAS").Range("D" & LinhaAtual).Value
+            ' verifica se todos os campos possuem valores:
+            If (Sheets("TAREFAS").Range("A" & LinhaAtual).Value <> "" And Sheets("TAREFAS").Range("B" & LinhaAtual).Value <> "" And Sheets("TAREFAS").Range("D" & LinhaAtual).Value <> "") Then
+                
+                ' Pega os valores das celulas:
+                Tarefa = Sheets("TAREFAS").Range("A" & LinhaAtual).Value
+                Periocidade = Sheets("TAREFAS").Range("B" & LinhaAtual).Value
+                DataConclusao = Sheets("TAREFAS").Range("D" & LinhaAtual).Value
+                
+            Else ' se não:
+            
+                erroLinha1 = Sheets("TAREFAS").Range("A" & LinhaAtual).Row
+                MsgBox "Erro5: Não foi possivel encontrar todas as informações necessarias na tarefa da linha " & erroLinha1 & "."
+                Exit Sub
+                
+            End If
             
             ' se o mes nao tiver a quantidade de dias necessarios:
             If (DataConclusao > QtsDias) Then
@@ -86,10 +129,25 @@ Sub NovoCalendario()
             ' retorna a posição da planilha:
             Localidade = Posicao(DataConclusao, NomePlanilha)
               
+            ' Se a função retornar um erro:
+            If (Localidade = "Erro4") Then
+                
+                MsgBox "Erro4: Não foi encontrar as posiçoes dos dias, verifique se estão nas colunas corretas ou se o nome da planilha esta correto."
+                Exit Sub
+            
+            End If
+              
             If ((DataConclusao + 7) >= QtsDias) Then
                 
                 ' Encontra o local do ultimo dia:
                 ProximoDia = Posicao(QtsDias, NomePlanilha)
+                
+                If (Localidade = "Erro4") Then
+                
+                    MsgBox "Erro4: Não foi encontrar as posiçoes dos dias, verifique se estão nas colunas corretas e se existe 2 linhas com X abaixo do calendario."
+                    Exit Sub
+            
+                End If
                 
                 ' Pega a coluna do dia da tarefa:
                 LinhaUm = Sheets(NomePlanilha).Range(Localidade).Row
@@ -100,12 +158,22 @@ Sub NovoCalendario()
                 ' Se O dia procurado ser na mesma linha:
                 If (LinhaUm = LinhaDois) Then
                 
-                    qtsLinhas =
-                
+                    NovaUltimaLinha = Sheets(NomePlanilha).Range("B1048576").End(xlUp).Row
+                    NovaUltimaLinha = Sheets(NomePlanilha).Range("B" & NovaUltimaLinha).End(xlUp).Row - 1
+                    
+                    qtsLinhas = NovaUltimaLinha - LinhaUm
+                    
                 Else
                     
                     ' Descobre quantas linhas livres tem:
                     qtsLinhas = DiferencaNormal(Localidade, ProximoDia, NomePlanilha)
+                    
+                    If (qtsLinhas = -2) Then
+                
+                        MsgBox "Erro6: Verifique se abaixo do calendario existe duas linhas com X"
+                        Exit Sub
+                
+                    End If
                 
                 End If
             
@@ -115,6 +183,13 @@ Sub NovoCalendario()
                 
                 '
                 qtsLinhas = DiferencaNormal(Localidade, ProximoDia, NomePlanilha)
+                
+                If (qtsLinhas = -2) Then
+                
+                    MsgBox "Erro6: Verifique se abaixo do calendario existe duas linhas com X"
+                    Exit Sub
+                
+                End If
                 
             End If
               
@@ -141,6 +216,7 @@ Sub NovoCalendario()
                         
                         ' Sai do laço
                         Adicionado = True
+                        GoTo FImLaco
                         
                     End If
                 
@@ -150,24 +226,32 @@ Sub NovoCalendario()
                 If (quantidade > qtsLinhas) Then
                     
                     ' Adiciona uma nova Linha:
-                    Sheets(NomePlanilha).Range(Localidade).Offset(quantidade, 0).EntireRow.Insert
+                    Sheets(NomePlanilha).Range(Localidade).Offset(quantidade - 1, 0).EntireRow.Insert
                     
                     ' Pega o range da nova celula:
-                    ColunaUm = Sheets(NomePlanilha).Range(Localidade).Offset(quantidade, 0).Column
+                    ColunaUm = Sheets(NomePlanilha).Range(Localidade).Offset(quantidade - 1, 0).Column
                     ColunaUm = QualColuna(CInt(ColunaUm))
-                    LinhaUm = Sheets(NomePlanilha).Range(Localidade).Offset(quantidade, 0).Row
+                    LinhaUm = Sheets(NomePlanilha).Range(Localidade).Offset(quantidade - 1, 0).Row
                     LocalUm = ColunaUm & LinhaUm
                     
                     ' Pega o range da nova celula
-                    ColunaDois = Sheets(NomePlanilha).Range(Localidade).Offset(quantidade, 1).Column
+                    ColunaDois = Sheets(NomePlanilha).Range(Localidade).Offset(quantidade - 1, 1).Column
                     ColunaDois = QualColuna(CInt(ColunaDois))
-                    LinhaDois = Sheets(NomePlanilha).Range(Localidade).Offset(quantidade, 0).Row
+                    LinhaDois = Sheets(NomePlanilha).Range(Localidade).Offset(quantidade - 1, 0).Row
                     localDois = ColunaDois & LinhaDois
                     
                     ' Mescla as celulas:
-                    Sheets(NomePlanilha).Range(LocalUm & ":" & localDois).Merge
+                    'Sheets(NomePlanilha).Range(LocalUm & ":" & localDois).Merge
+                    Sheets(NomePlanilha).Range("B" & LinhaUm & ":" & "C" & LinhaUm).Merge
+                    Sheets(NomePlanilha).Range("D" & LinhaUm & ":" & "E" & LinhaUm).Merge
+                    Sheets(NomePlanilha).Range("F" & LinhaUm & ":" & "G" & LinhaUm).Merge
+                    Sheets(NomePlanilha).Range("H" & LinhaUm & ":" & "I" & LinhaUm).Merge
+                    Sheets(NomePlanilha).Range("J" & LinhaUm & ":" & "K" & LinhaUm).Merge
+                    Sheets(NomePlanilha).Range("L" & LinhaUm & ":" & "M" & LinhaUm).Merge
+                    Sheets(NomePlanilha).Range("N" & LinhaUm & ":" & "O" & LinhaUm).Merge
                     
                     ' Adiciona a tarefa:
+                    
                     Sheets(NomePlanilha).Range(Localidade).Offset(quantidade, 0).Value = Tarefa
                     
                     ' Adiciona mais 1 na quantidade de linhas:
@@ -176,9 +260,11 @@ Sub NovoCalendario()
                     ' Fala que ja foi adicionado
                     Adicionado = True
                     
-                    MsgBox "Nova linha adicionada: " & Tarefa
+                    'MsgBox "Nova linha adicionada: " & Tarefa
                     
                 End If
+                
+FImLaco:
                 
             Wend
             
@@ -197,16 +283,28 @@ Sub NovoCalendario()
         
     Wend
     
+Exit Sub
+
+' Oops:
+ '   MsgBox ("Verifique se existe uma planilha com o nome ou se existe tarefas cadastradas")
+    
+Erro3:
+    
+    erroLinha1 = Sheets("TAREFAS").Range("F" & AuxiliarNome).Offset(0, 1).Row
+    MsgBox "Erro3: A quantidade de dias inseridos da planilha na linha " & erroLinha1 & " não é um numero valido."
+
 End Sub
 
 ' função para encontrar a posição do determinado dia:
-Function Posicao(DataFim As Integer, Planilha As String) As String
+Function Posicao(DataFim As Integer, planilha As String) As String
 
-    Posicao = Achar(DataFim, Planilha)
+    Posicao = Achar(DataFim, planilha)
 
 End Function
 
-    Function Achar(Dia As Integer, Plan As String) As String
+                   Function Achar(Dia As Integer, Plan As String) As String
+
+On Error GoTo Oops
 
     ' Variaveis:
     Dim UltimaLinha     As Integer
@@ -220,7 +318,7 @@ End Function
     DiaString = Dia
     
     ' Coloca 45 como a ultima Linha:
-    UltimaLinha = 45
+    UltimaLinha = Sheets(Plan).Range("B1048576").End(xlUp).Row
     
     ' A linha atual recebe 6:
     LinhaAtual = 6
@@ -270,7 +368,19 @@ End Function
         auxiliarColuna = auxiliarColuna + 1
         
     Wend
+    
+If (Achar = "") Then
 
+    Achar = "Erro4"
+
+End If
+
+Exit Function
+
+Oops:
+
+    Achar = "Erro4"
+    
 End Function
 
 ' função para converter o dia:
@@ -333,9 +443,12 @@ Function NovaColuna(Valor As Integer) As String
     
 End Function
 
-' Função para saber quantas linhas livres tem para cadastrar:
+                                    ' Função para saber quantas linhas livres tem para cadastrar:
 Function DiferencaNormal(PrimeiroDia As String, SegundoDia As String, NomePlanilha As String) As Integer
-    
+
+' Se por acaso retornar um erro:
+On Error GoTo Oops
+
     ' Variaveis:
     Dim LinhaPrimeiroDia As Integer
     Dim LinhaSegundoDia  As Integer
@@ -347,8 +460,14 @@ Function DiferencaNormal(PrimeiroDia As String, SegundoDia As String, NomePlanil
     LinhaSegundoDia = Sheets(NomePlanilha).Range(SegundoDia).Row
     
     ' Faz a diferença e tambem retorna:
-    DiferencaNormal = (LinhaSegundoDia - LinhaPrimeiroDia) '- 1
+    DiferencaNormal = (LinhaSegundoDia - LinhaPrimeiroDia) - 1
     
+Exit Function
+    
+Oops:
+
+DiferencaNormal = -2
+
 End Function
 ' Função para mudar a coluna:
 Function QualColuna(Valor As Integer) As String
