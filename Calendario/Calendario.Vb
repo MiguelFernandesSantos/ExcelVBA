@@ -108,6 +108,8 @@ Sub NovoCalendario()
                 ' Pega os valores das celulas:
                 Tarefa = Sheets("TAREFAS").Range("A" & LinhaAtual).Value
                 Periocidade = Sheets("TAREFAS").Range("B" & LinhaAtual).Value
+                
+                On Error GoTo erro6
                 DataConclusao = Sheets("TAREFAS").Range("D" & LinhaAtual).Value
                 
             Else ' se não:
@@ -132,7 +134,7 @@ Sub NovoCalendario()
             ' Se a função retornar um erro:
             If (Localidade = "Erro4") Then
                 
-                MsgBox "Erro4: Não foi encontrar as posiçoes dos dias, verifique se estão nas colunas corretas ou se o nome da planilha esta correto."
+                MsgBox "Erro4: Dificuldade na localização do dia " & DataConclusao & " verifique se o dia esta correto, ou se existe X abaixo do calendario.  Planilha: " & NomePlanilha
                 Exit Sub
             
             End If
@@ -142,9 +144,9 @@ Sub NovoCalendario()
                 ' Encontra o local do ultimo dia:
                 ProximoDia = Posicao(QtsDias, NomePlanilha)
                 
-                If (Localidade = "Erro4") Then
+                If (Localidade = "Erro4" Or ProximoDia = "Erro4") Then
                 
-                    MsgBox "Erro4: Não foi encontrar as posiçoes dos dias, verifique se estão nas colunas corretas e se existe 2 linhas com X abaixo do calendario."
+                    MsgBox "Erro4: Dificuldade na localização do dia " & QtsDias & " verifique se o dia esta correto, ou se existe X abaixo do calendario.   Planilha: " & NomePlanilha
                     Exit Sub
             
                 End If
@@ -170,7 +172,7 @@ Sub NovoCalendario()
                     
                     If (qtsLinhas = -2) Then
                 
-                        MsgBox "Erro6: Verifique se abaixo do calendario existe duas linhas com X"
+                        MsgBox "Erro6: Verifique se abaixo do calendário  existe duas linhas com X."
                         Exit Sub
                 
                     End If
@@ -186,7 +188,7 @@ Sub NovoCalendario()
                 
                 If (qtsLinhas = -2) Then
                 
-                    MsgBox "Erro6: Verifique se abaixo do calendario existe duas linhas com X"
+                    MsgBox "Erro6: Verifique se abaixo do calendário existe duas linhas com X"
                     Exit Sub
                 
                 End If
@@ -260,8 +262,6 @@ Sub NovoCalendario()
                     ' Fala que ja foi adicionado
                     Adicionado = True
                     
-                    'MsgBox "Nova linha adicionada: " & Tarefa
-                    
                 End If
                 
 FImLaco:
@@ -293,6 +293,12 @@ Erro3:
     erroLinha1 = Sheets("TAREFAS").Range("F" & AuxiliarNome).Offset(0, 1).Row
     MsgBox "Erro3: A quantidade de dias inseridos da planilha na linha " & erroLinha1 & " não é um numero valido."
 
+erro6:
+    
+erroLinha1 = Sheets("TAREFAS").Range("D" & LinhaAtual).Row
+MsgBox "Erro3: O dia para realizar a tarefa da linha " & erroLinha1 & " não é um dia valido."
+    
+
 End Sub
 
 ' função para encontrar a posição do determinado dia:
@@ -301,8 +307,7 @@ Function Posicao(DataFim As Integer, planilha As String) As String
     Posicao = Achar(DataFim, planilha)
 
 End Function
-
-                   Function Achar(Dia As Integer, Plan As String) As String
+Function Achar(Dia As Integer, Plan As String) As String
 
 On Error GoTo Oops
 
@@ -442,8 +447,7 @@ Function NovaColuna(Valor As Integer) As String
     End If
     
 End Function
-
-                                    ' Função para saber quantas linhas livres tem para cadastrar:
+' Função para saber quantas linhas livres tem para cadastrar:
 Function DiferencaNormal(PrimeiroDia As String, SegundoDia As String, NomePlanilha As String) As Integer
 
 ' Se por acaso retornar um erro:
